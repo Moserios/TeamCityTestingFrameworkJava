@@ -1,0 +1,96 @@
+# Markdown
+# Smoke_Test
+
+#* 1 Build configuration test
+#* Create project
+#* Create VCS
+#* Create build configuration
+#* Run build configuration
+#* Check success build results
+
+#Get Token
+GET http://localhost:8111/authenticationTest.html?crsf
+Authorization: Basic admin admin
+
+### Constants
+//@host = 172.18.64.1
+@host = 192.168.1.3
+
+### Generated test data
+@projectId = a
+//@projectId = {{$random.alphabetic(10)}}
+@buildTypeId = b
+//@buildTypeId = {{$random.alphabetic(10)}}
+
+
+
+### 1. Create project
+# @no-cookie-jar
+POST http://{{host}}:8111/app/rest/projects
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic admin admin
+
+{
+  "parentProject": {
+    "locator": "_Root"
+  },
+  "name": "{{projectId}}",
+  "id": "{{projectId}}",
+  "copyAllAssociatedSettings": true
+}
+
+
+### 2. Create build configuration
+# @no-cookie-jar
+POST http://{{host}}:8111/app/rest/buildTypes
+//POST http://admin:admin@172.18.64.1:8111/app/rest/buildTypes
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic admin admin
+
+{
+  "id": "{{buildTypeId}}",
+  "name": "Print hello world",
+  "project": {
+    "id": "{{projectId}}"
+  },
+  "steps": {
+    "step": [
+      {
+        "name": "Print hello world",
+        "type": "simpleRunner",
+        "properties": {
+          "property": [
+            {
+              "name": "script.content",
+              "value": "echo 'Hello World!'"
+            },
+            {
+              "name": "teamcity.step.mode",
+              "value": "default"
+            },
+            {
+              "name": "use.custom.script",
+              "value": "true"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+
+### 3. Run build
+# @no-cookie-jar
+POST http://{{host}}:8111/app/rest/buildQueue
+//POST http://admin:admin@172.18.64.1:8111/app/rest/buildQueue
+Content-Type: application/json
+Accept: application/json
+Authorization: Basic admin admin
+
+{
+  "buildType": {
+    "id": "{{buildTypeId}}"
+  }
+}
