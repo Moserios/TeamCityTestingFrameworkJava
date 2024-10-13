@@ -1,13 +1,7 @@
 // модернизированный файлик с тестом
 
 package com.example.teamcity.api;
-
 import org.testng.annotations.Test;
-import org.apache.http.HttpStatus;
-import io.restassured.RestAssured;
-import com.example.teamcity.api.models.User;
-import com.example.teamcity.api.spec.Specifications;
-
 import static io.qameta.allure.Allure.step;
 
 public class BuildTypeTest extends BaseApiTest{
