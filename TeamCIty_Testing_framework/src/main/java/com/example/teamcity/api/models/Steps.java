@@ -1,5 +1,3 @@
-// файлик с сущностью пользователя
-
 package com.example.teamcity.api.models;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +9,7 @@ import lombok.Builder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseModel {
-    private String username;
-    private String password;
+public class Steps {
+    private Integer count;
+    private List<Step> step;
 }
