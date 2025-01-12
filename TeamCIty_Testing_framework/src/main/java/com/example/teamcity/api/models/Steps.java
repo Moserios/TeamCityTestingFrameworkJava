@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 @Data
 @AllArgsConstructor
