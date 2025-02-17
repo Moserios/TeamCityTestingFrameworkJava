@@ -16,4 +16,12 @@ public class Role extends BaseModel {
     private String roleId = "SYSTEM_ADMIN";
     @Builder.Default
     private String scope = "g";
+
+    public static Role systemAdmin() {
+        return new Role("SYSTEM_ADMIN", "g");
+    }
+
+    public static Role projectAdmin(String projectId) {
+        return new Role("PROJECT_ADMIN", "p:" + projectId);
+    }
 }
