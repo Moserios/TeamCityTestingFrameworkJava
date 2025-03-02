@@ -6,9 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 @Builder
 @Data
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)

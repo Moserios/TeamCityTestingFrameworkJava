@@ -8,11 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(exclude = "steps")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BuildType extends BaseModel{
     @Random
@@ -23,3 +27,6 @@ public class BuildType extends BaseModel{
     private Project project;
     private Steps steps;
 }
+
+
+
