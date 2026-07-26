@@ -88,9 +88,9 @@ public class BuildTypeTest extends BaseApiTest {
             new UncheckedBase(Specifications.authSpec(testData.getUser()), Endpoint.BUILD_TYPES)
                     .create(duplicateBuildType)
                     .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                    .body(Matchers.containsString(
+                    .body("errors.message", Matchers.hasItem(Matchers.containsString(
                     "The build configuration / template ID \"%s\" is already used by another configuration or template"
-                    .formatted(testData.getBuildType().getId())));
+                    .formatted(testData.getBuildType().getId()))));
         });
 
     }
@@ -135,7 +135,7 @@ public class BuildTypeTest extends BaseApiTest {
             new UncheckedBase(Specifications.authSpec(user2), Endpoint.BUILD_TYPES)
                     .create(buildType)
                     .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN)
-                    .body(Matchers.containsString("Access denied"));
+                    .body("errors.message", Matchers.hasItem(Matchers.containsString("You do not have enough permissions")));
         });
     }
 }

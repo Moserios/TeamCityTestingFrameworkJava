@@ -8,6 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeSuite;
 
 import com.example.teamcity.api.models.User;
+import com.example.teamcity.ui.pages.BasePage;
 import com.example.teamcity.ui.pages.LoginPage;
 import org.testng.annotations.Test;
 import com.example.teamcity.api.enums.Endpoint;
@@ -23,6 +24,7 @@ public class BaseUiTest extends BaseTest {
         Configuration.browserSize = Config.getProperty("browserSize");
         Configuration.remote = Config.getProperty("remote");
         Configuration.baseUrl = "http://" + Config.getProperty("baseURL");
+        Configuration.timeout = BasePage.BASE_WAIT.toMillis();
         Configuration.browserCapabilities.setCapability("selenoid:options",
                 Map.of("enableVNC", true,
                         "enableLog", true));

@@ -20,7 +20,7 @@ public class LoginPage extends BasePage {
         inputUsername.val(user.getUsername());
         inputLogin.val(user.getPassword());
         inputSubmitButton.click();
-
+        Selenide.Wait().withTimeout(BASE_WAIT).until(driver -> !driver.getCurrentUrl().contains(LOGIN_URL));
         return Selenide.page(ProjectsPage.class);
     }
 }
