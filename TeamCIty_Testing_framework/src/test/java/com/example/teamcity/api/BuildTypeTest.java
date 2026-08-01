@@ -5,13 +5,12 @@ package com.example.teamcity.api;
 import com.example.teamcity.api.enums.Endpoint;
 import com.example.teamcity.api.models.*;
 import com.example.teamcity.api.requests.CheckedRequests;
+import com.example.teamcity.api.requests.Locator;
 import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.requests.unchecked.UncheckedBase;
 import com.example.teamcity.api.spec.Specifications;
 import com.example.teamcity.api.spec.response.ValidationResponseSpecifications;
 import com.example.teamcity.api.models.*;
-import org.apache.http.HttpStatus;
-import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 import java.util.Arrays;
 
@@ -25,7 +24,7 @@ public class BuildTypeTest extends BaseApiTest {
         var userCheckRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
         userCheckRequests.<Project>getRequest(Endpoint.PROJECTS).create(testData.getProject());
         userCheckRequests.getRequest(Endpoint.BUILD_TYPES).create(testData.getBuildType());
-        var createdBuildType = userCheckRequests.<BuildType>getRequest(Endpoint.BUILD_TYPES).read(testData.getBuildType().getId());
+        var createdBuildType = userCheckRequests.<BuildType>getRequest(Endpoint.BUILD_TYPES).read(Locator.id(testData.getBuildType().getId()));
         softy.assertEquals(createdBuildType, testData.getBuildType(), "Build type name is not correct");
     }
 
@@ -59,7 +58,7 @@ public class BuildTypeTest extends BaseApiTest {
         });
 
         step("Read and verify the created build type", () -> {
-            var createdBuildType = adminRequests.<BuildType>getRequest(Endpoint.BUILD_TYPES).read(testData.getBuildType().getId());
+            var createdBuildType = adminRequests.<BuildType>getRequest(Endpoint.BUILD_TYPES).read(Locator.id(testData.getBuildType().getId()));
             softy.assertEquals(createdBuildType, testData.getBuildType(), "Build type name is not correct");
         });
     }
@@ -87,10 +86,7 @@ public class BuildTypeTest extends BaseApiTest {
                     Arrays.asList(testData.getProject()), BuildType.class, testData.getBuildType().getId());
             new UncheckedBase(Specifications.authSpec(testData.getUser()), Endpoint.BUILD_TYPES)
                     .create(duplicateBuildType)
-                    .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                    .body("errors.message", Matchers.hasItem(Matchers.containsString(
-                    "The build configuration / template ID \"%s\" is already used by another configuration or template"
-                    .formatted(testData.getBuildType().getId()))));
+                    .then().spec(ValidationResponseSpecifications.checkBuildTypeIdAlreadyExists(testData.getBuildType().getId()));
         });
 
     }
@@ -134,8 +130,7 @@ public class BuildTypeTest extends BaseApiTest {
         step("Attempt to create build type for project1 by user2 and verify that build type creation is forbidden for a projectAdmin on another user's project", () -> {
             new UncheckedBase(Specifications.authSpec(user2), Endpoint.BUILD_TYPES)
                     .create(buildType)
-                    .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN)
-                    .body("errors.message", Matchers.hasItem(Matchers.containsString("You do not have enough permissions")));
+                    .then().spec(ValidationResponseSpecifications.checkAccessForbidden());
         });
     }
 }

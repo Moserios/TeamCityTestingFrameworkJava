@@ -4,12 +4,13 @@ import com.example.teamcity.api.enums.Endpoint;
 import com.example.teamcity.api.models.BuildType;
 import com.example.teamcity.api.models.Role;
 import com.example.teamcity.api.models.Roles;
+import com.example.teamcity.api.requests.Locator;
 import com.example.teamcity.api.requests.unchecked.UncheckedBase;
 import com.example.teamcity.api.spec.Specifications;
+import com.example.teamcity.api.spec.response.ValidationResponseSpecifications;
 import com.example.teamcity.ui.pages.BuildTypePage;
 import com.example.teamcity.ui.pages.admin.CreateBuildTypePage;
 import com.codeborne.selenide.Condition;
-import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class CreateBuildTypeTest extends BaseUiTest {
 
         step("Check that the build configuration was created correctly on the API level", () -> {
             var createdBuildType = superUserCheckRequests.<BuildType>getRequest(Endpoint.BUILD_TYPES)
-                    .read(testData.getBuildType().getId());
+                    .read(Locator.id(testData.getBuildType().getId()));
             softy.assertEquals(createdBuildType.getName(), testData.getBuildType().getName(),
                     "Build configuration name is not correct");
         });
@@ -67,13 +68,13 @@ public class CreateBuildTypeTest extends BaseUiTest {
         });
 
         step("Check that error appears `Name must not be empty`", () -> {
-            createBuildTypePage.getNameRequiredError().shouldHave(Condition.exactText("Name must not be empty"));
+            createBuildTypePage.getNameRequiredError().shouldHave(Condition.exactText(CreateBuildTypePage.NAME_REQUIRED_ERROR));
         });
 
         step("Check that the build configuration was not created", () -> {
             new UncheckedBase(Specifications.superUserSpec(), Endpoint.BUILD_TYPES)
-                    .read(testData.getBuildType().getId())
-                    .then().assertThat().statusCode(HttpStatus.SC_NOT_FOUND);
+                    .read(Locator.id(testData.getBuildType().getId()))
+                    .then().spec(ValidationResponseSpecifications.checkEntityNotFound());
         });
     }
 }

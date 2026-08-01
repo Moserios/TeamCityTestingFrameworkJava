@@ -8,6 +8,8 @@ import com.example.teamcity.ui.pages.BasePage;
 import static com.codeborne.selenide.Selenide.$;
 
 public class CreateBuildTypePage extends BasePage {
+    public static final String NAME_REQUIRED_ERROR = "Name must not be empty";
+
     private static final String CREATE_URL = "/admin/createObjectMenu.html?projectId=%s&showMode=createBuildTypeMenu";
 
     private final SelenideElement manuallyTab = $("a[href='#createManually']");

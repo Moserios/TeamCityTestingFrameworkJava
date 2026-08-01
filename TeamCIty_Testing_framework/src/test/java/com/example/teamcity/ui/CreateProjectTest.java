@@ -1,12 +1,12 @@
 package com.example.teamcity.ui;
 
 import com.codeborne.selenide.Condition;
+import com.example.teamcity.api.constants.ProjectId;
 import com.example.teamcity.api.models.Project;
-import com.example.teamcity.api.spec.Specifications;
+import com.example.teamcity.api.requests.Locator;
 import com.example.teamcity.ui.pages.ProjectPage;
 import com.example.teamcity.ui.pages.admin.CreateProjectPage;
 import com.example.teamcity.ui.pages.admin.CreateBuildTypePage;
-import io.restassured.RestAssured;
 import org.testng.annotations.Test;
 import com.example.teamcity.api.enums.Endpoint;
 
@@ -16,6 +16,8 @@ import static io.qameta.allure.Allure.step;
 
 @Test(groups = {"Regression"})
 public class CreateProjectTest extends BaseUiTest{
+    private static final String PROJECT_DESCRIPTION = "Created by Automation";
+
     @Test(description = "User should be able to create project with proper fields values", groups = "Positive")
     public void userCreatedProject() {
         step("Login as user");
@@ -23,16 +25,15 @@ public class CreateProjectTest extends BaseUiTest{
 
         // взаимодействие с UI
         step("Create project via 'New Project' dialog", () -> {
-            CreateProjectPage.open("_Root")
-                    .CreateProject(testData.getProject().getName(), testData.getProject().getId(), "Created by Automation");
+            CreateProjectPage.open(ProjectId.ROOT)
+                    .CreateProject(testData.getProject().getName(), testData.getProject().getId(), PROJECT_DESCRIPTION);
         });
 
         // проверка состояния API
         // (корректность отправки данных с UI на API)
         var createdProject = step("Check that the project was created correctly on the API level", () -> {
-            var project = RestAssured.given().spec(Specifications.superUserSpec())
-                    .get(Endpoint.PROJECTS.getUrl() + "/name:" + testData.getProject().getName())
-                    .then().statusCode(200).extract().as(Project.class);
+            var project = superUserCheckRequests.<Project>getRequest(Endpoint.PROJECTS)
+                    .read(Locator.name(testData.getProject().getName()));
             softy.assertEquals(project.getName(), testData.getProject().getName(), "Project name is not correct");
             return project;
         });

@@ -24,4 +24,19 @@ public class ValidationResponseSpecifications {
                 )))
                 .build();
     }
+
+    public static ResponseSpecification checkAccessForbidden() {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(HttpStatus.SC_FORBIDDEN)
+                .expectBody("errors.message", Matchers.hasItem(Matchers.containsString(
+                        "You do not have enough permissions"
+                )))
+                .build();
+    }
+
+    public static ResponseSpecification checkEntityNotFound() {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(HttpStatus.SC_NOT_FOUND)
+                .build();
+    }
 }
